@@ -289,7 +289,7 @@ function ApplyJobPage() {
                       id="fullName"
                       name="fullName"
                       type="text"
-                      placeholder="Enter your full name"
+                      placeholder="      Enter your full name"
                       value={formData.fullName}
                       onChange={handleChange}
                     />
@@ -314,7 +314,7 @@ function ApplyJobPage() {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="example@email.com"
+                      placeholder="     example@email.com"
                       value={formData.email}
                       onChange={handleChange}
                     />
@@ -339,7 +339,7 @@ function ApplyJobPage() {
                       id="phone"
                       name="phone"
                       type="tel"
-                      placeholder="+91 9876543210"
+                      placeholder="    +91 xxxxxxxxxx"
                       value={formData.phone}
                       onChange={handleChange}
                     />
@@ -364,7 +364,7 @@ function ApplyJobPage() {
                       id="location"
                       name="location"
                       type="text"
-                      placeholder="Hyderabad, Telangana"
+                      placeholder="       Hyderabad, Telangana"
                       value={formData.location}
                       onChange={handleChange}
                     />
@@ -406,7 +406,7 @@ function ApplyJobPage() {
                       id="education"
                       name="education"
                       type="text"
-                      placeholder="B.Tech Computer Science"
+                      placeholder="      B.Tech Computer Science"
                       value={formData.education}
                       onChange={handleChange}
                     />
@@ -431,7 +431,7 @@ function ApplyJobPage() {
                       id="experience"
                       name="experience"
                       type="text"
-                      placeholder="Example: 2 Years"
+                      placeholder="      Example: 2 Years"
                       value={formData.experience}
                       onChange={handleChange}
                     />
@@ -498,7 +498,7 @@ function ApplyJobPage() {
                       id="linkedin"
                       name="linkedin"
                       type="url"
-                      placeholder="https://linkedin.com/in/..."
+                      placeholder="     https://linkedin.com/in/..."
                       value={formData.linkedin}
                       onChange={handleChange}
                     />
@@ -517,7 +517,7 @@ function ApplyJobPage() {
                       id="portfolio"
                       name="portfolio"
                       type="url"
-                      placeholder="https://..."
+                      placeholder="     https://..."
                       value={formData.portfolio}
                       onChange={handleChange}
                     />
@@ -536,7 +536,7 @@ function ApplyJobPage() {
                       id="expectedSalary"
                       name="expectedSalary"
                       type="text"
-                      placeholder="Example: ₹6,00,000"
+                      placeholder="      Example: ₹6,00,000"
                       value={formData.expectedSalary}
                       onChange={handleChange}
                     />

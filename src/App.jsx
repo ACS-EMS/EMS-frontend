@@ -14,6 +14,7 @@ import ApplyJobPage from "./pages/public/ApplyJobPage";
 import ContactPage from "./pages/public/ContactPage";
 import NotFoundPage from "./pages/public/NotFoundPage";
 import LoginPage from "./pages/public/auth/LoginPage";
+import Chatbot from "./pages/public/Chatbot";
 
 function App() {
   return (
@@ -55,6 +56,10 @@ function App() {
           <Route
             path="/login"
             element={<LoginPage />}
+          />
+          <Route
+            path="/chatbot"
+            element={<Chatbot />}
           />
 
         </Route>
