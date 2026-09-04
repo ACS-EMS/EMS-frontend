@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 
 import PublicLayout from "./layouts/PublicLayout";
-import Chatbot from "./pages/public/Chatbot";
+
 import HomePage from "./pages/public/HomePage";
 import AboutPage from "./pages/public/AboutPage";
 import JobsPage from "./pages/public/JobsPage";
@@ -13,6 +13,7 @@ import JobDetailsPage from "./pages/public/JobDetailsPage";
 import ApplyJobPage from "./pages/public/ApplyJobPage";
 import ContactPage from "./pages/public/ContactPage";
 import NotFoundPage from "./pages/public/NotFoundPage";
+import LoginPage from "./pages/public/auth/LoginPage";
 
 function App() {
   return (
@@ -51,7 +52,10 @@ function App() {
             path="/contact"
             element={<ContactPage />}
           />
-          <Route path="/chatbot" element={<Chatbot />} />
+          <Route
+            path="/login"
+            element={<LoginPage />}
+          />
 
         </Route>
 
