@@ -21,6 +21,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminRoles from "./pages/admin/AdminRoles";
+import AdminDepartments from "./pages/admin/AdminDepartments";
 import Chatbot from "./pages/public/Chatbot";
 
 function App() {
@@ -107,6 +108,10 @@ function App() {
 <Route
   path="/super-admin/roles"
   element={<AdminRoles />}
+/>
+<Route
+  path="/super-admin/departments"
+  element={<AdminDepartments />}
 />
 
         <Route

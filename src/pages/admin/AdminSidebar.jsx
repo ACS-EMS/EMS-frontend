@@ -28,10 +28,10 @@ const menuItems = [
   icon: <ShieldCheck size={19} />,
 },
   {
-    name: "Departments",
-    path: "/super-admin/departments",
-    icon: <Building2 size={19} />,
-  },
+  name: "Departments",
+  path: "/super-admin/departments",
+  icon: <Building2 size={19} />,
+},
   {
     name: "Reports",
     path: "/super-admin/reports",
