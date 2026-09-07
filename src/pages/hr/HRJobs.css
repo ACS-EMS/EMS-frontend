@@ -76,7 +76,7 @@
 
 .job-row {
   display: grid;
-  grid-template-columns: 2fr 1.5fr 1fr 1fr;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 100px;
   gap: 15px;
   align-items: center;
   padding: 16px 10px;
@@ -130,4 +130,43 @@
   padding: 40px;
   color: #64748b;
   font-size: 15px;
+}
+
+.close-job-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  width: fit-content;
+
+  padding: 7px 12px;
+
+  border: 1px solid #fecaca;
+  background: #fff1f2;
+  color: #dc2626;
+
+  border-radius: 7px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.close-job-button:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.close-job-button svg {
+  flex-shrink: 0;
+}
+
+.position-closed {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
 }
