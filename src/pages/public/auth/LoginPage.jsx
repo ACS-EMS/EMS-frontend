@@ -213,6 +213,9 @@ function LoginPage() {
                 <option value="hr">
                   HR
                 </option>
+                <option value="hiring manager">
+                  Hiring Manager 
+                </option>
 
                 <option value="super-admin">
                   Super Admin
@@ -220,6 +223,9 @@ function LoginPage() {
 
                 <option value="recruiter">
                   Recruiter
+                </option>
+                <option value="interviewer">
+                  Interviewer
                 </option>
 
                 <option value="employee">
