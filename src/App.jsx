@@ -3,9 +3,10 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-
+import HRDashboard from "./pages/hr/HRDashboard";
+import HRJobs from "./pages/hr/HRJobs";
+import CreateJob from "./pages/hr/CreateJob";
 import PublicLayout from "./layouts/PublicLayout";
-
 import HomePage from "./pages/public/HomePage";
 import AboutPage from "./pages/public/AboutPage";
 import JobsPage from "./pages/public/JobsPage";
@@ -14,6 +15,8 @@ import ApplyJobPage from "./pages/public/ApplyJobPage";
 import ContactPage from "./pages/public/ContactPage";
 import NotFoundPage from "./pages/public/NotFoundPage";
 import LoginPage from "./pages/public/auth/LoginPage";
+import SignupPage from "./pages/public/auth/SignupPage";
+
 import Chatbot from "./pages/public/Chatbot";
 
 function App() {
@@ -58,11 +61,29 @@ function App() {
             element={<LoginPage />}
           />
           <Route
+  path="/signup"
+  element={<SignupPage />}
+/>
+          <Route
             path="/chatbot"
             element={<Chatbot />}
           />
 
         </Route>
+        <Route
+  path="/hr/dashboard"
+  element={<HRDashboard />}
+/>    
+<Route
+  path="/hr/jobs"
+  element={<HRJobs />}
+/>    
+
+
+<Route
+  path="/hr/jobs/create"
+  element={<CreateJob />}
+/>
 
         <Route
           path="*"
