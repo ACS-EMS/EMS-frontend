@@ -12,7 +12,11 @@ function SignupPage() {
   });
 
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
+  // ==============================
+  // HANDLE INPUT
+  // ==============================
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -20,25 +24,111 @@ function SignupPage() {
     });
 
     setError("");
+    setSuccess("");
   };
 
+  // ==============================
+  // HANDLE SIGNUP
+  // ==============================
   const handleSignup = (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.password || !formData.confirmPassword) {
+    const email = formData.email.trim().toLowerCase();
+    const password = formData.password;
+    const confirmPassword = formData.confirmPassword;
+
+    // Check empty fields
+    if (!email || !password || !confirmPassword) {
       setError("Please fill in all fields.");
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    // Check password length
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    // Check passwords
+    if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    // Temporary frontend signup
-    console.log("Account created:", formData.email);
+    // ==============================
+    // GET REGISTERED USERS
+    // ==============================
 
-    navigate("/login");
+    let registeredUsers = [];
+
+    try {
+      const savedUsers =
+        localStorage.getItem("registeredUsers");
+
+      if (savedUsers) {
+        registeredUsers = JSON.parse(savedUsers);
+      }
+
+      // Make sure it is an array
+      if (!Array.isArray(registeredUsers)) {
+        registeredUsers = [];
+      }
+    } catch (error) {
+      registeredUsers = [];
+    }
+
+    // ==============================
+    // CHECK EXISTING EMAIL
+    // ==============================
+
+    const existingUser = registeredUsers.find(
+      (user) =>
+        user.email &&
+        user.email.trim().toLowerCase() === email
+    );
+
+    if (existingUser) {
+      setError("This email is already registered.");
+      return;
+    }
+
+    // ==============================
+    // CREATE NEW USER
+    // ==============================
+
+    const newUser = {
+      email: email,
+      password: password,
+    };
+
+    const updatedUsers = [
+      ...registeredUsers,
+      newUser,
+    ];
+
+    // ==============================
+    // SAVE USER
+    // ==============================
+
+    localStorage.setItem(
+      "registeredUsers",
+      JSON.stringify(updatedUsers)
+    );
+
+    console.log(
+      "Account created:",
+      newUser
+    );
+
+    // Success message
+    setSuccess(
+      "Account created successfully! Redirecting to login..."
+    );
+
+    // Go to login
+    setTimeout(() => {
+      navigate("/login");
+    }, 1000);
   };
 
   return (
@@ -46,26 +136,17 @@ function SignupPage() {
 
       <div className="signup-card">
 
-        {/* Header */}
-        <div className="signup-header">
+        <h1>Create Account</h1>
 
-          <div className="signup-icon">
-            👤
-          </div>
+        <p className="signup-subtitle">
+          Create your TalentAI account
+        </p>
 
-          <h1>Create Account</h1>
-
-          <p>
-            Create your TalentAI account
-          </p>
-
-        </div>
-
-        {/* Form */}
         <form onSubmit={handleSignup}>
 
-          {/* Email */}
-          <div className="signup-form-group">
+          {/* EMAIL */}
+
+          <div className="form-group">
 
             <label htmlFor="email">
               Email
@@ -82,8 +163,9 @@ function SignupPage() {
 
           </div>
 
-          {/* Password */}
-          <div className="signup-form-group">
+          {/* PASSWORD */}
+
+          <div className="form-group">
 
             <label htmlFor="password">
               Password
@@ -93,15 +175,16 @@ function SignupPage() {
               type="password"
               id="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Create a password"
               value={formData.password}
               onChange={handleChange}
             />
 
           </div>
 
-          {/* Confirm Password */}
-          <div className="signup-form-group">
+          {/* CONFIRM PASSWORD */}
+
+          <div className="form-group">
 
             <label htmlFor="confirmPassword">
               Confirm Password
@@ -118,39 +201,40 @@ function SignupPage() {
 
           </div>
 
-          {/* Error */}
+          {/* ERROR */}
+
           {error && (
             <div className="signup-error">
               {error}
             </div>
           )}
 
-          {/* Button */}
+          {/* SUCCESS */}
+
+          {success && (
+            <div className="signup-success">
+              {success}
+            </div>
+          )}
+
+          {/* CREATE ACCOUNT */}
+
           <button
             type="submit"
             className="signup-button"
           >
             Create Account
-            <span>→</span>
           </button>
 
         </form>
 
-        {/* Login link */}
-        <div className="signup-login-section">
+        <p className="login-text">
+          Already have an account?{" "}
 
-          <p>
-            Already have an account?
-          </p>
-
-          <Link
-            to="/login"
-            className="signup-login-link"
-          >
+          <Link to="/login">
             Login
           </Link>
-
-        </div>
+        </p>
 
       </div>
 

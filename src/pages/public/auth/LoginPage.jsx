@@ -4,10 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 function LoginPage() {
   const navigate = useNavigate();
 
-  // Selected role
-  const [role, setRole] = useState("employee");
+  const [role, setRole] = useState("hr");
 
-  // Login form data
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -16,7 +14,9 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  // Handle username/password
+  // ==============================
+  // HANDLE INPUT CHANGE
+  // ==============================
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -26,37 +26,126 @@ function LoginPage() {
     setError("");
   };
 
-  // Handle login
+  // ==============================
+  // HANDLE LOGIN
+  // ==============================
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Validation
-    if (!formData.username || !formData.password) {
-      setError("Please enter username/email and password.");
+    const enteredEmail = formData.username
+      .trim()
+      .toLowerCase();
+
+    const enteredPassword = formData.password;
+
+    // Check empty fields
+    if (!enteredEmail || !enteredPassword) {
+      setError("Please enter your email and password.");
       return;
     }
 
-    /*
-      TEMPORARY FRONTEND ROLE LOGIN
+    // ==============================
+    // GET REGISTERED USERS
+    // ==============================
 
-      Later this will be replaced with
-      FastAPI authentication.
-    */
+    const savedUsers =
+      localStorage.getItem("registeredUsers");
 
-    if (role === "hr") {
-      navigate("/hr/dashboard");
+    let registeredUsers = [];
+
+    try {
+      registeredUsers = savedUsers
+        ? JSON.parse(savedUsers)
+        : [];
+    } catch (error) {
+      registeredUsers = [];
     }
 
-    else if (role === "super-admin") {
-      navigate("/super-admin/dashboard");
+    // Make sure registeredUsers is an array
+    if (!Array.isArray(registeredUsers)) {
+      registeredUsers = [];
     }
 
-    else if (role === "recruiter") {
-      navigate("/recruiter/dashboard");
+    // ==============================
+    // FIND USER
+    // ==============================
+
+    const user = registeredUsers.find((registeredUser) => {
+      if (!registeredUser) {
+        return false;
+      }
+
+      const storedEmail = String(
+        registeredUser.email || ""
+      )
+        .trim()
+        .toLowerCase();
+
+      const storedPassword = String(
+        registeredUser.password || ""
+      );
+
+      return (
+        storedEmail === enteredEmail &&
+        storedPassword === enteredPassword
+      );
+    });
+
+    // ==============================
+    // LOGIN FAILED
+    // ==============================
+
+    if (!user) {
+      setError(
+        "Account not found or password is incorrect. Please check your email and password."
+      );
+
+      return;
     }
 
-    else if (role === "employee") {
-      navigate("/employee/dashboard");
+    // ==============================
+    // LOGIN SUCCESS
+    // ==============================
+
+    localStorage.setItem(
+      "loggedInUser",
+      JSON.stringify({
+        email: user.email,
+        role: role,
+      })
+    );
+
+    // ==============================
+    // REDIRECT
+    // ==============================
+
+    switch (role) {
+      case "hr":
+        navigate("/hr/dashboard");
+        break;
+
+      case "super-admin":
+        navigate("/super-admin/dashboard");
+        break;
+
+      case "recruiter":
+        navigate("/recruiter/dashboard");
+        break;
+
+      case "hiring-manager":
+        navigate("/hiring-manager/dashboard");
+        break;
+
+      case "interviewer":
+        navigate("/interviewer/dashboard");
+        break;
+
+      case "employee":
+        navigate("/employee/dashboard");
+        break;
+
+      default:
+        navigate("/");
     }
   };
 
@@ -70,7 +159,6 @@ function LoginPage() {
       <div className="login-left">
 
         <div className="login-brand">
-
           <h1>
             Talent<span>AI</span>
           </h1>
@@ -78,9 +166,7 @@ function LoginPage() {
           <p>
             AI-Powered Recruitment Platform
           </p>
-
         </div>
-
 
         <div className="login-left-content">
 
@@ -96,11 +182,9 @@ function LoginPage() {
             modern organizations.
           </p>
 
-
           <div className="login-features">
 
             <div className="feature-item">
-
               <div className="feature-icon">
                 ✓
               </div>
@@ -114,12 +198,9 @@ function LoginPage() {
                   AI-powered candidate screening
                 </p>
               </div>
-
             </div>
 
-
             <div className="feature-item">
-
               <div className="feature-icon">
                 ✓
               </div>
@@ -133,12 +214,9 @@ function LoginPage() {
                   Manage your workforce efficiently
                 </p>
               </div>
-
             </div>
 
-
             <div className="feature-item">
-
               <div className="feature-icon">
                 ✓
               </div>
@@ -152,13 +230,11 @@ function LoginPage() {
                   Secure access for every user
                 </p>
               </div>
-
             </div>
 
           </div>
 
         </div>
-
       </div>
 
 
@@ -169,8 +245,6 @@ function LoginPage() {
       <div className="login-right">
 
         <div className="login-card">
-
-          {/* Header */}
 
           <div className="login-header">
 
@@ -193,9 +267,7 @@ function LoginPage() {
 
           <form onSubmit={handleLogin}>
 
-            {/* ==============================
-                ROLE
-            ============================== */}
+            {/* ROLE */}
 
             <div className="form-group">
 
@@ -206,15 +278,18 @@ function LoginPage() {
               <select
                 id="role"
                 value={role}
-                onChange={(e) => setRole(e.target.value)}
+                onChange={(e) =>
+                  setRole(e.target.value)
+                }
                 className="role-select"
               >
 
                 <option value="hr">
                   HR
                 </option>
-                <option value="hiring manager">
-                  Hiring Manager 
+
+                <option value="hiring-manager">
+                  Hiring Manager
                 </option>
 
                 <option value="super-admin">
@@ -224,6 +299,7 @@ function LoginPage() {
                 <option value="recruiter">
                   Recruiter
                 </option>
+
                 <option value="interviewer">
                   Interviewer
                 </option>
@@ -237,9 +313,7 @@ function LoginPage() {
             </div>
 
 
-            {/* ==============================
-                USERNAME
-            ============================== */}
+            {/* EMAIL */}
 
             <div className="form-group">
 
@@ -248,10 +322,10 @@ function LoginPage() {
               </label>
 
               <input
-                type="text"
+                type="email"
                 id="username"
                 name="username"
-                placeholder="Enter username or email"
+                placeholder="Enter your email"
                 value={formData.username}
                 onChange={handleChange}
               />
@@ -259,9 +333,7 @@ function LoginPage() {
             </div>
 
 
-            {/* ==============================
-                PASSWORD
-            ============================== */}
+            {/* PASSWORD */}
 
             <div className="form-group">
 
@@ -272,7 +344,11 @@ function LoginPage() {
               <div className="password-wrapper">
 
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
                   id="password"
                   name="password"
                   placeholder="Enter your password"
@@ -287,7 +363,9 @@ function LoginPage() {
                     setShowPassword(!showPassword)
                   }
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword
+                    ? "Hide"
+                    : "Show"}
                 </button>
 
               </div>
@@ -295,9 +373,7 @@ function LoginPage() {
             </div>
 
 
-            {/* ==============================
-                REMEMBER + FORGOT
-            ============================== */}
+            {/* OPTIONS */}
 
             <div className="login-options">
 
@@ -310,7 +386,6 @@ function LoginPage() {
                 </span>
 
               </label>
-
 
               <Link
                 to="/forgot-password"
@@ -331,9 +406,7 @@ function LoginPage() {
             )}
 
 
-            {/* ==============================
-                LOGIN BUTTON
-            ============================== */}
+            {/* LOGIN BUTTON */}
 
             <button
               type="submit"
@@ -346,14 +419,11 @@ function LoginPage() {
           </form>
 
 
-          {/* ==============================
-              SIGN UP
-          ============================== */}
+          {/* SIGNUP */}
 
           <div className="divider">
             <span>or</span>
           </div>
-
 
           <div className="signup-section">
 
@@ -371,7 +441,7 @@ function LoginPage() {
           </div>
 
 
-          {/* BACK TO HOME */}
+          {/* HOME */}
 
           <Link
             to="/"
