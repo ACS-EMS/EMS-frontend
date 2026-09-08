@@ -18,6 +18,10 @@ import LoginPage from "./pages/public/auth/LoginPage";
 import SignupPage from "./pages/public/auth/SignupPage";
 
 import Chatbot from "./pages/public/Chatbot";
+import HRCandidates from "./pages/hr/HRCandidates";
+import HRScreening from "./pages/hr/HRScreening";
+import HRAnalytics from "./pages/hr/HRAnalytics";
+import HRInterviews from "./pages/hr/HRInterviews";
 
 function App() {
   return (
@@ -27,68 +31,29 @@ function App() {
 
         <Route element={<PublicLayout />}>
 
-          <Route
-            path="/"
-            element={<HomePage />}
-          />
-
-          <Route
-            path="/about"
-            element={<AboutPage />}
-          />
-
-          <Route
-            path="/jobs"
-            element={<JobsPage />}
-          />
-
-          <Route
-            path="/jobs/:jobId"
-            element={<JobDetailsPage />}
-          />
-
-          <Route
-            path="/apply/:jobId"
-            element={<ApplyJobPage />}
-          />
-
-          <Route
-            path="/contact"
-            element={<ContactPage />}
-          />
-          <Route
-            path="/login"
-            element={<LoginPage />}
-          />
-          <Route
-  path="/signup"
-  element={<SignupPage />}
-/>
-          <Route
-            path="/chatbot"
-            element={<Chatbot />}
-          />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/jobs" element={<JobsPage />} />
+          <Route path="/jobs/:jobId" element={<JobDetailsPage />} />
+          <Route path="/apply/:jobId" element={<ApplyJobPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/chatbot" element={<Chatbot />} />
 
         </Route>
-        <Route
-  path="/hr/dashboard"
-  element={<HRDashboard />}
-/>    
-<Route
-  path="/hr/jobs"
-  element={<HRJobs />}
-/>    
 
+        <Route path="/hr/dashboard" element={<HRDashboard />} />
+        <Route path="/hr/jobs" element={<HRJobs />} />
+        <Route path="/hr/jobs/create" element={<CreateJob />} />
 
-<Route
-  path="/hr/jobs/create"
-  element={<CreateJob />}
-/>
-
-        <Route
-          path="*"
-          element={<NotFoundPage />}
-        />
+        {/* new AI feature routes */}
+        <Route path="/hr/candidates" element={<HRCandidates />} />
+        <Route path="/hr/ai-screening" element={<HRScreening />} />
+        <Route path="/hr/analytics" element={<HRAnalytics />} />
+        <Route path="/hr/interviews" element={<HRInterviews />} />
+        
+        <Route path="*" element={<NotFoundPage />} />
 
       </Routes>
 
