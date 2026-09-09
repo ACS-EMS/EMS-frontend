@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import apiClient from "../../../services/apiClient";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // ==============================
   // HANDLE INPUT CHANGE
@@ -29,432 +31,407 @@ function LoginPage() {
   // ==============================
   // HANDLE LOGIN
   // ==============================
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     const enteredEmail = formData.username
-      .trim()
-      .toLowerCase();
+        .trim()
+        .toLowerCase();
 
     const enteredPassword = formData.password;
 
-    // Check empty fields
     if (!enteredEmail || !enteredPassword) {
       setError("Please enter your email and password.");
       return;
     }
 
-    // ==============================
-    // GET REGISTERED USERS
-    // ==============================
-
-    const savedUsers =
-      localStorage.getItem("registeredUsers");
-
-    let registeredUsers = [];
-
     try {
-      registeredUsers = savedUsers
-        ? JSON.parse(savedUsers)
-        : [];
-    } catch (error) {
-      registeredUsers = [];
-    }
+      setLoading(true);
+      setError("");
 
-    // Make sure registeredUsers is an array
-    if (!Array.isArray(registeredUsers)) {
-      registeredUsers = [];
-    }
+      const response = await apiClient.post(
+          "/auth/login",
+          {
+            email: enteredEmail,
+            password: enteredPassword,
+          }
+      );
 
-    // ==============================
-    // FIND USER
-    // ==============================
+      const apiResponse = response.data;
 
-    const user = registeredUsers.find((registeredUser) => {
-      if (!registeredUser) {
-        return false;
+      if (!apiResponse.success) {
+        setError(
+            apiResponse.message || "Login failed."
+        );
+        return;
       }
 
-      const storedEmail = String(
-        registeredUser.email || ""
+      const user = apiResponse.data;
+
+      // Save token
+      if (user.token) {
+        localStorage.setItem(
+            "token",
+            user.token
+        );
+      }
+
+      // Save logged-in user
+      localStorage.setItem(
+          "loggedInUser",
+          JSON.stringify({
+            userId: user.userId,
+            userName: user.userName,
+            email: user.email,
+            role: user.role,
+          })
+      );
+
+      // ==============================
+      // REDIRECT BASED ON BACKEND ROLE
+      // ==============================
+
+      const backendRole = String(
+          user.role || ""
       )
-        .trim()
-        .toLowerCase();
+          .trim()
+          .toUpperCase()
+          .replaceAll("-", "_");
 
-      const storedPassword = String(
-        registeredUser.password || ""
+      switch (backendRole) {
+        case "HR":
+          navigate("/hr/dashboard");
+          break;
+
+        case "SUPER_ADMIN":
+        case "ADMIN":
+          navigate(
+              "/super-admin/dashboard"
+          );
+          break;
+
+        case "RECRUITER":
+          navigate(
+              "/recruiter/dashboard"
+          );
+          break;
+
+        case "HIRING_MANAGER":
+          navigate(
+              "/hiring-manager/dashboard"
+          );
+          break;
+
+        case "INTERVIEWER":
+          navigate(
+              "/interviewer/dashboard"
+          );
+          break;
+
+        case "EMPLOYEE":
+          navigate(
+              "/employee/dashboard"
+          );
+          break;
+
+        case "CANDIDATE":
+          navigate("/");
+          break;
+
+        default:
+          navigate("/");
+      }
+    } catch (error) {
+      console.error(
+          "Login error:",
+          error
       );
 
-      return (
-        storedEmail === enteredEmail &&
-        storedPassword === enteredPassword
-      );
-    });
-
-    // ==============================
-    // LOGIN FAILED
-    // ==============================
-
-    if (!user) {
       setError(
-        "Account not found or password is incorrect. Please check your email and password."
+          error.response?.data?.message ||
+          "Invalid email or password."
       );
-
-      return;
-    }
-
-    // ==============================
-    // LOGIN SUCCESS
-    // ==============================
-
-    localStorage.setItem(
-      "loggedInUser",
-      JSON.stringify({
-        email: user.email,
-        role: role,
-      })
-    );
-
-    // ==============================
-    // REDIRECT
-    // ==============================
-
-    switch (role) {
-      case "hr":
-        navigate("/hr/dashboard");
-        break;
-
-      case "super-admin":
-        navigate("/super-admin/dashboard");
-        break;
-
-      case "recruiter":
-        navigate("/recruiter/dashboard");
-        break;
-
-      case "hiring-manager":
-        navigate("/hiring-manager/dashboard");
-        break;
-
-      case "interviewer":
-        navigate("/interviewer/dashboard");
-        break;
-
-      case "employee":
-        navigate("/employee/dashboard");
-        break;
-
-      default:
-        navigate("/");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-page">
-
-      {/* ==============================
+      <div className="login-page">
+        {/* ==============================
           LEFT SIDE
       ============================== */}
 
-      <div className="login-left">
+        <div className="login-left">
+          <div className="login-brand">
+            <h1>
+              Talent<span>AI</span>
+            </h1>
 
-        <div className="login-brand">
-          <h1>
-            Talent<span>AI</span>
-          </h1>
-
-          <p>
-            AI-Powered Recruitment Platform
-          </p>
-        </div>
-
-        <div className="login-left-content">
-
-          <h2>
-            Manage your
-            <br />
-            <span>talent smarter.</span>
-          </h2>
-
-          <p>
-            AI-powered recruitment and employee
-            management platform designed for
-            modern organizations.
-          </p>
-
-          <div className="login-features">
-
-            <div className="feature-item">
-              <div className="feature-icon">
-                ✓
-              </div>
-
-              <div>
-                <h4>
-                  Smart Recruitment
-                </h4>
-
-                <p>
-                  AI-powered candidate screening
-                </p>
-              </div>
-            </div>
-
-            <div className="feature-item">
-              <div className="feature-icon">
-                ✓
-              </div>
-
-              <div>
-                <h4>
-                  Employee Management
-                </h4>
-
-                <p>
-                  Manage your workforce efficiently
-                </p>
-              </div>
-            </div>
-
-            <div className="feature-item">
-              <div className="feature-icon">
-                ✓
-              </div>
-
-              <div>
-                <h4>
-                  Role Based Access
-                </h4>
-
-                <p>
-                  Secure access for every user
-                </p>
-              </div>
-            </div>
-
+            <p>
+              AI-Powered Recruitment Platform
+            </p>
           </div>
 
-        </div>
-      </div>
-
-
-      {/* ==============================
-          RIGHT SIDE
-      ============================== */}
-
-      <div className="login-right">
-
-        <div className="login-card">
-
-          <div className="login-header">
-
-            <div className="login-icon">
-              👤
-            </div>
-
+          <div className="login-left-content">
             <h2>
-              Welcome Back
+              Manage your
+              <br />
+              <span>
+              talent smarter.
+            </span>
             </h2>
 
             <p>
-              Login to your TalentAI account
+              AI-powered recruitment and employee
+              management platform designed for
+              modern organizations.
             </p>
 
-          </div>
+            <div className="login-features">
+              <div className="feature-item">
+                <div className="feature-icon">
+                  ✓
+                </div>
 
+                <div>
+                  <h4>
+                    Smart Recruitment
+                  </h4>
 
-          {/* LOGIN FORM */}
-
-          <form onSubmit={handleLogin}>
-
-            {/* ROLE */}
-
-            <div className="form-group">
-
-              <label htmlFor="role">
-                Login As
-              </label>
-
-              <select
-                id="role"
-                value={role}
-                onChange={(e) =>
-                  setRole(e.target.value)
-                }
-                className="role-select"
-              >
-
-                <option value="hr">
-                  HR
-                </option>
-
-                <option value="hiring-manager">
-                  Hiring Manager
-                </option>
-
-                <option value="super-admin">
-                  Super Admin
-                </option>
-
-                <option value="recruiter">
-                  Recruiter
-                </option>
-
-                <option value="interviewer">
-                  Interviewer
-                </option>
-
-                <option value="employee">
-                  Employee
-                </option>
-
-              </select>
-
-            </div>
-
-
-            {/* EMAIL */}
-
-            <div className="form-group">
-
-              <label htmlFor="username">
-                Username / Email
-              </label>
-
-              <input
-                type="email"
-                id="username"
-                name="username"
-                placeholder="Enter your email"
-                value={formData.username}
-                onChange={handleChange}
-              />
-
-            </div>
-
-
-            {/* PASSWORD */}
-
-            <div className="form-group">
-
-              <label htmlFor="password">
-                Password
-              </label>
-
-              <div className="password-wrapper">
-
-                <input
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  id="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-
-                <button
-                  type="button"
-                  className="show-password"
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
-                >
-                  {showPassword
-                    ? "Hide"
-                    : "Show"}
-                </button>
-
+                  <p>
+                    AI-powered candidate screening
+                  </p>
+                </div>
               </div>
 
-            </div>
+              <div className="feature-item">
+                <div className="feature-icon">
+                  ✓
+                </div>
 
+                <div>
+                  <h4>
+                    Employee Management
+                  </h4>
 
-            {/* OPTIONS */}
-
-            <div className="login-options">
-
-              <label className="remember-me">
-
-                <input type="checkbox" />
-
-                <span>
-                  Remember me
-                </span>
-
-              </label>
-
-              <Link
-                to="/forgot-password"
-                className="forgot-password"
-              >
-                Forgot Password?
-              </Link>
-
-            </div>
-
-
-            {/* ERROR */}
-
-            {error && (
-              <div className="login-error">
-                {error}
+                  <p>
+                    Manage your workforce efficiently
+                  </p>
+                </div>
               </div>
-            )}
 
+              <div className="feature-item">
+                <div className="feature-icon">
+                  ✓
+                </div>
 
-            {/* LOGIN BUTTON */}
+                <div>
+                  <h4>
+                    Role Based Access
+                  </h4>
 
-            <button
-              type="submit"
-              className="login-button"
-            >
-              Login
-              <span>→</span>
-            </button>
-
-          </form>
-
-
-          {/* SIGNUP */}
-
-          <div className="divider">
-            <span>or</span>
+                  <p>
+                    Secure access for every user
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div className="signup-section">
-
-            <p>
-              Don't have an account?
-            </p>
-
-            <Link
-              to="/signup"
-              className="signup-link"
-            >
-              Create an Account
-            </Link>
-
-          </div>
-
-
-          {/* HOME */}
-
-          <Link
-            to="/"
-            className="back-home"
-          >
-            ← Back to Home
-          </Link>
-
         </div>
 
-      </div>
+        {/* ==============================
+          RIGHT SIDE
+      ============================== */}
 
-    </div>
+        <div className="login-right">
+          <div className="login-card">
+            <div className="login-header">
+              <div className="login-icon">
+                👤
+              </div>
+
+              <h2>
+                Welcome Back
+              </h2>
+
+              <p>
+                Login to your TalentAI account
+              </p>
+            </div>
+
+            {/* LOGIN FORM */}
+
+            <form onSubmit={handleLogin}>
+              {/* ROLE */}
+
+              <div className="form-group">
+                <label htmlFor="role">
+                  Login As
+                </label>
+
+                <select
+                    id="role"
+                    value={role}
+                    onChange={(e) =>
+                        setRole(e.target.value)
+                    }
+                    className="role-select"
+                >
+                  <option value="hr">
+                    HR
+                  </option>
+
+                  <option value="hiring-manager">
+                    Hiring Manager
+                  </option>
+
+                  <option value="super-admin">
+                    Super Admin
+                  </option>
+
+                  <option value="recruiter">
+                    Recruiter
+                  </option>
+
+                  <option value="interviewer">
+                    Interviewer
+                  </option>
+
+                  <option value="employee">
+                    Employee
+                  </option>
+                </select>
+              </div>
+
+              {/* EMAIL */}
+
+              <div className="form-group">
+                <label htmlFor="username">
+                  Username / Email
+                </label>
+
+                <input
+                    type="email"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your email"
+                    value={formData.username}
+                    onChange={handleChange}
+                />
+              </div>
+
+              {/* PASSWORD */}
+
+              <div className="form-group">
+                <label htmlFor="password">
+                  Password
+                </label>
+
+                <div className="password-wrapper">
+                  <input
+                      type={
+                        showPassword
+                            ? "text"
+                            : "password"
+                      }
+                      id="password"
+                      name="password"
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleChange}
+                  />
+
+                  <button
+                      type="button"
+                      className="show-password"
+                      onClick={() =>
+                          setShowPassword(
+                              !showPassword
+                          )
+                      }
+                  >
+                    {showPassword
+                        ? "Hide"
+                        : "Show"}
+                  </button>
+                </div>
+              </div>
+
+              {/* OPTIONS */}
+
+              <div className="login-options">
+                <label className="remember-me">
+                  <input type="checkbox" />
+
+                  <span>
+                  Remember me
+                </span>
+                </label>
+
+                <Link
+                    to="/forgot-password"
+                    className="forgot-password"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+
+              {/* ERROR */}
+
+              {error && (
+                  <div className="login-error">
+                    {error}
+                  </div>
+              )}
+
+              {/* LOGIN BUTTON */}
+
+              <button
+                  type="submit"
+                  className="login-button"
+                  disabled={loading}
+              >
+                {loading
+                    ? "Logging in..."
+                    : "Login"}
+
+                {!loading && (
+                    <span>→</span>
+                )}
+              </button>
+            </form>
+
+            {/* SIGNUP */}
+
+            <div className="divider">
+              <span>or</span>
+            </div>
+
+            <div className="signup-section">
+              <p>
+                Don't have an account?
+              </p>
+
+              <Link
+                  to="/signup"
+                  className="signup-link"
+              >
+                Create an Account
+              </Link>
+            </div>
+
+            {/* HOME */}
+
+            <Link
+                to="/"
+                className="back-home"
+            >
+              ← Back to Home
+            </Link>
+          </div>
+        </div>
+      </div>
   );
 }
 

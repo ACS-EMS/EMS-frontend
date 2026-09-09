@@ -52,7 +52,6 @@ function App() {
         <Route path="/hr/jobs" element={<HRJobs />} />
         <Route path="/hr/jobs/create" element={<CreateJob />} />
 
-<<<<<<< HEAD
 <Route
   path="/hr/jobs/create"
   element={<CreateJob />}
@@ -86,7 +85,6 @@ function App() {
           path="*"
           element={<NotFoundPage />}
         />
-=======
         {/* new AI feature routes */}
         <Route path="/hr/candidates" element={<HRCandidates />} />
         <Route path="/hr/ai-screening" element={<HRScreening />} />
@@ -94,7 +92,6 @@ function App() {
         <Route path="/hr/interviews" element={<HRInterviews />} />
         
         <Route path="*" element={<NotFoundPage />} />
->>>>>>> 9f9d76b2fb029787acc974a14e32d029028d2b97
 
       </Routes>
 
