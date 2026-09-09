@@ -66,7 +66,8 @@ export async function ensureBackendJobId(localJob) {
       job_title: localJob.title,
       job_description: description,
       location: localJob.location || "",
-      preferred_skills: [],
+      required_skills: localJob.requiredSkills || [],
+      preferred_skills: localJob.preferredSkills || [],
     }),
   });
   if (!res.ok) throw new Error("Could not register this job with the AI backend.");

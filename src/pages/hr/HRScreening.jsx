@@ -216,6 +216,7 @@ function HRScreening() {
                 <div className="job-table" style={{ marginTop: 16 }}>
                   <div className="job-row job-heading ranking-row-grid">
                     <span>Rank</span>
+                    <span>Candidate Name</span>
                     <span>Candidate ID</span>
                     <span>Match Score</span>
                     <span>Missing Required Skills</span>
@@ -223,6 +224,7 @@ function HRScreening() {
                   {rankResult.map((r) => (
                     <div className="job-row ranking-row-grid" key={r.candidate_id}>
                       <span className={`rank-badge ${r.rank === 1 ? "rank-first" : ""}`}>#{r.rank}</span>
+                      <span>{candidates[r.candidate_id]?.filename || "Unknown candidate"}</span>
                       <span className="candidate-id-cell">{r.candidate_id}</span>
                       <span style={{ color: scoreColor(r.match_score), fontWeight: 700 }}>
                         {r.match_score}%

@@ -13,6 +13,8 @@ function CreateJob() {
     experience: "",
     salary: "",
     description: "",
+    requiredSkills: "",
+    preferredSkills: "",
   });
 
   const [error, setError] = useState("");
@@ -52,6 +54,14 @@ const newJob = {
   experience: jobData.experience,
   salary: jobData.salary,
   description: jobData.description,
+  requiredSkills: jobData.requiredSkills
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
+  preferredSkills: jobData.preferredSkills
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
   applications: 0,
   status: "Active",
 };
@@ -197,6 +207,38 @@ localStorage.setItem(
                 value={jobData.description}
                 onChange={handleChange}
               />
+            </div>
+
+            <div className="form-grid">
+
+              <div className="job-form-group">
+                <label>
+                  Required Skills
+                </label>
+
+                <input
+                  type="text"
+                  name="requiredSkills"
+                  placeholder="e.g. Python, Django, PostgreSQL"
+                  value={jobData.requiredSkills}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="job-form-group">
+                <label>
+                  Preferred Skills
+                </label>
+
+                <input
+                  type="text"
+                  name="preferredSkills"
+                  placeholder="e.g. Docker, AWS"
+                  value={jobData.preferredSkills}
+                  onChange={handleChange}
+                />
+              </div>
+
             </div>
 
             {error && (
