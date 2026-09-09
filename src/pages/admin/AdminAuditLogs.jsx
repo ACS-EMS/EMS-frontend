@@ -14,7 +14,7 @@ import { useAdmin } from "../../context/AdminContext";
 import "./AdminAuditLogs.css";
 
 function AdminAuditLogs() {
-  const { auditLogs } = useAdmin();
+  const { auditLogs = [] } = useAdmin();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [actionFilter, setActionFilter] = useState("All");

@@ -49,6 +49,7 @@ function LoginPage() {
       setLoading(true);
       setError("");
 
+<<<<<<< Updated upstream
       const response = await apiClient.post(
           "/auth/login",
           {
@@ -62,10 +63,29 @@ function LoginPage() {
       if (!apiResponse.success) {
         setError(
             apiResponse.message || "Login failed."
+=======
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: enteredEmail,
+          password: enteredPassword,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setError(
+          result.message || "Invalid email or password."
+>>>>>>> Stashed changes
         );
         return;
       }
 
+<<<<<<< Updated upstream
       const user = apiResponse.data;
 
       // Save token
@@ -150,6 +170,83 @@ function LoginPage() {
       setError(
           error.response?.data?.message ||
           "Invalid email or password."
+=======
+      const userData = result.data;
+
+      if (!userData || !userData.token) {
+        setError(
+          "Login token was not received from backend."
+        );
+        return;
+      }
+
+      // ==============================
+      // SAVE JWT TOKEN
+      // ==============================
+      localStorage.setItem(
+        "token",
+        userData.token
+      );
+
+      // ==============================
+      // SAVE USER DATA
+      // ==============================
+      localStorage.setItem(
+        "loggedInUser",
+        JSON.stringify({
+          userId: userData.userId,
+          userName: userData.userName,
+          email: userData.email,
+          backendRole: userData.role,
+          selectedRole: role,
+        })
+      );
+
+      localStorage.setItem(
+        "role",
+        role
+      );
+
+      // ==============================
+      // REDIRECT BASED ON SELECTED ROLE
+      // ==============================
+      switch (role) {
+        case "hr":
+          navigate("/hr/dashboard");
+          break;
+
+        case "super-admin":
+          navigate("/super-admin/dashboard");
+          break;
+
+        case "recruiter":
+          navigate("/recruiter/dashboard");
+          break;
+
+        case "hiring-manager":
+          navigate("/hiring-manager/dashboard");
+          break;
+
+        case "interviewer":
+          navigate("/interviewer/dashboard");
+          break;
+
+        case "employee":
+          navigate("/employee/dashboard");
+          break;
+
+        default:
+          navigate("/");
+      }
+    } catch (error) {
+      console.error(
+        "Login error:",
+        error
+      );
+
+      setError(
+        "Unable to connect to the server. Please try again."
+>>>>>>> Stashed changes
       );
     } finally {
       setLoading(false);
@@ -173,7 +270,27 @@ function LoginPage() {
             </p>
           </div>
 
+<<<<<<< Updated upstream
           <div className="login-left-content">
+=======
+        </div>
+      </div>
+
+      {/* ==============================
+          RIGHT SIDE
+      ============================== */}
+
+      <div className="login-right">
+
+        <div className="login-card">
+
+          <div className="login-header">
+
+            <div className="login-icon">
+              👤
+            </div>
+
+>>>>>>> Stashed changes
             <h2>
               Manage your
               <br />
@@ -194,6 +311,7 @@ function LoginPage() {
                   ✓
                 </div>
 
+<<<<<<< Updated upstream
                 <div>
                   <h4>
                     Smart Recruitment
@@ -203,6 +321,111 @@ function LoginPage() {
                     AI-powered candidate screening
                   </p>
                 </div>
+=======
+          {/* LOGIN FORM */}
+
+          <form onSubmit={handleLogin}>
+
+            {/* ROLE */}
+
+            <div className="form-group">
+
+              <label htmlFor="role">
+                Login As
+              </label>
+
+              <select
+                id="role"
+                value={role}
+                onChange={(e) =>
+                  setRole(e.target.value)
+                }
+                className="role-select"
+              >
+
+                <option value="hr">
+                  HR
+                </option>
+
+                <option value="hiring-manager">
+                  Hiring Manager
+                </option>
+
+                <option value="super-admin">
+                  Super Admin
+                </option>
+
+                <option value="recruiter">
+                  Recruiter
+                </option>
+
+                <option value="interviewer">
+                  Interviewer
+                </option>
+
+                <option value="employee">
+                  Employee
+                </option>
+
+              </select>
+
+            </div>
+
+            {/* EMAIL */}
+
+            <div className="form-group">
+
+              <label htmlFor="username">
+                Username / Email
+              </label>
+
+              <input
+                type="email"
+                id="username"
+                name="username"
+                placeholder="Enter your email"
+                value={formData.username}
+                onChange={handleChange}
+              />
+
+            </div>
+
+            {/* PASSWORD */}
+
+            <div className="form-group">
+
+              <label htmlFor="password">
+                Password
+              </label>
+
+              <div className="password-wrapper">
+
+                <input
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+
+                <button
+                  type="button"
+                  className="show-password"
+                  onClick={() =>
+                    setShowPassword(!showPassword)
+                  }
+                >
+                  {showPassword
+                    ? "Hide"
+                    : "Show"}
+                </button>
+
+>>>>>>> Stashed changes
               </div>
 
               <div className="feature-item">
@@ -210,6 +433,7 @@ function LoginPage() {
                   ✓
                 </div>
 
+<<<<<<< Updated upstream
                 <div>
                   <h4>
                     Employee Management
@@ -219,8 +443,39 @@ function LoginPage() {
                     Manage your workforce efficiently
                   </p>
                 </div>
+=======
+            {/* OPTIONS */}
+
+            <div className="login-options">
+
+              <label className="remember-me">
+
+                <input type="checkbox" />
+
+                <span>
+                  Remember me
+                </span>
+
+              </label>
+
+              <Link
+                to="/forgot-password"
+                className="forgot-password"
+              >
+                Forgot Password?
+              </Link>
+
+            </div>
+
+            {/* ERROR */}
+
+            {error && (
+              <div className="login-error">
+                {error}
+>>>>>>> Stashed changes
               </div>
 
+<<<<<<< Updated upstream
               <div className="feature-item">
                 <div className="feature-icon">
                   ✓
@@ -238,6 +493,56 @@ function LoginPage() {
               </div>
             </div>
           </div>
+=======
+            {/* LOGIN BUTTON */}
+
+            <button
+              type="submit"
+              className="login-button"
+              disabled={loading}
+            >
+              {loading
+                ? "Logging in..."
+                : "Login"}
+
+              {!loading && (
+                <span>→</span>
+              )}
+            </button>
+
+          </form>
+
+          {/* SIGNUP */}
+
+          <div className="divider">
+            <span>or</span>
+          </div>
+
+          <div className="signup-section">
+
+            <p>
+              Don't have an account?
+            </p>
+
+            <Link
+              to="/signup"
+              className="signup-link"
+            >
+              Create an Account
+            </Link>
+
+          </div>
+
+          {/* HOME */}
+
+          <Link
+            to="/"
+            className="back-home"
+          >
+            ← Back to Home
+          </Link>
+
+>>>>>>> Stashed changes
         </div>
 
         {/* ==============================
