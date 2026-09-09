@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HRSidebar from "./HRSidebar";
 import "./HRDashboard.css";
+import { fetchCandidates } from "./hrApi";
 
 function HRDashboard() {
   const navigate = useNavigate();
+
+  // Real candidate count from the AI backend — no hardcoded number.
+  // null = still loading, "error" = backend unreachable.
+  const [candidateCount, setCandidateCount] = useState(null);
+  const [candidatesError, setCandidatesError] = useState(false);
+
+  useEffect(() => {
+    fetchCandidates()
+      .then((data) => setCandidateCount(Object.keys(data).length))
+      .catch(() => setCandidatesError(true));
+  }, []);
 
   return (
     <div className="hr-dashboard">
@@ -56,8 +68,14 @@ function HRDashboard() {
             <div className="stat-icon">📄</div>
             <div>
               <p>Applications</p>
-              <h2>1,000</h2>
-              <span>Received applications</span>
+              <h2>
+                {candidatesError ? "—" : candidateCount === null ? "…" : candidateCount}
+              </h2>
+              <span>
+                {candidatesError
+                  ? "AI backend not reachable"
+                  : "Candidates uploaded to the system"}
+              </span>
             </div>
           </div>
 
@@ -132,17 +150,17 @@ function HRDashboard() {
   Create Job
 </button>
 
-              <button>
+              <button onClick={() => navigate("/hr/candidates")}>
                 <span>👥</span>
                 View Candidates
               </button>
 
-              <button>
+              <button onClick={() => navigate("/hr/interviews")}>
                 <span>📅</span>
                 Schedule Interview
               </button>
 
-              <button>
+              <button onClick={() => navigate("/hr/analytics")}>
                 <span>📊</span>
                 View Analytics
               </button>
